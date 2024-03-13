@@ -1,5 +1,4 @@
 import Api.DeleteUserApi;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
@@ -8,26 +7,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class ParameterizedUserPageRegistrationTest {
+public class ParameterizedUserPageRegistrationTest extends DriverProperties {
     int randomNumber = new Random().nextInt(1000000);
     String userName = "garri-" + randomNumber;
     String userEmail = "garri-" + randomNumber + "@yandex.ru";
 
-    private final String userPasswordNotcorrect;
+    private final String userPasswordNotCorrect;
     private final int errorResult;
 
-    public ParameterizedUserPageRegistrationTest(String userPasswordNotcorrect, int errorResult) {
-        this.userPasswordNotcorrect = userPasswordNotcorrect;
+    public ParameterizedUserPageRegistrationTest(String userPasswordNotCorrect, int errorResult) {
+        this.userPasswordNotCorrect = userPasswordNotCorrect;
         this.errorResult = errorResult;
     }
 
@@ -44,11 +39,8 @@ public class ParameterizedUserPageRegistrationTest {
     WebDriver driver;
 
     @Before
-    public void setUp() { //Используем менеджер для простой и удобной подготовки драйверов
-        WebDriverManager.chromedriver().setup(); //Драйвер для chrome
-        driver = new ChromeDriver();
-//        WebDriverManager.yandexdriver().setup(); //Драйвер для Яндекс.Браузера
-//        driver = new InternetExplorerDriver();
+    public void setUp() {
+        driver = initDriver("yandex");
         driver.get("https://stellarburgers.nomoreparties.site/register");
     }
 
@@ -57,7 +49,7 @@ public class ParameterizedUserPageRegistrationTest {
     @Description("Регистрация клиента с некорректным паролем") // описание теста
     public void RegistrationUserErrorPassword() {
         UserPageRegistration userPageRegistration = new UserPageRegistration(driver);
-        userPageRegistration.setUserData(userName, userEmail, userPasswordNotcorrect);
+        userPageRegistration.setUserData(userName, userEmail, userPasswordNotCorrect);
         assertEquals(errorResult, userPageRegistration.errorPassword());
     }
 
@@ -65,6 +57,6 @@ public class ParameterizedUserPageRegistrationTest {
     public void tearDown() {
         System.out.println("----------------Постусловие----------------");
         driver.quit(); // Закрывает браузер
-        new DeleteUserApi().deleteUser(userName, userEmail, userPasswordNotcorrect); //Удаляет клиента
+        new DeleteUserApi().deleteUser(userName, userEmail, userPasswordNotCorrect); //Удаляет клиента
     }
 }

@@ -11,7 +11,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -21,7 +20,7 @@ import java.util.Random;
 import static org.openqa.selenium.By.className;
 import static org.openqa.selenium.By.xpath;
 
-public class UiTest {
+public class UiTest extends DriverProperties {
     int randomNumber = new Random().nextInt(1000000);
     String userName = "garri-" + randomNumber;
     String userEmail = "garri-" + randomNumber + "@yandex.ru";
@@ -35,10 +34,7 @@ public class UiTest {
         System.out.println("---------Предусловие--------");
         new RegistrationUserApi().registrationUser(userName, userEmail, userPassword); //Создание нового клиента
         System.out.println("---------Клиент с email:" + userEmail + " создан--------");
-//        WebDriverManager.chromedriver().setup(); //Драйвер для chrome
-//        driver = new ChromeDriver();
-        System.setProperty("webdriver.chrome.driver", "src/main/resources/yandexdriver.exe"); //Драйвер для Яндекс.Браузера
-        driver = new ChromeDriver();
+        driver = initDriver("yandex");
     }
 
     @Test
@@ -49,9 +45,8 @@ public class UiTest {
         driver.get("https://stellarburgers.nomoreparties.site/");
         driver.findElement(xpath(".//button[text() = 'Войти в аккаунт']")).click();
         wait.until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/login"));
-        driver.findElement(xpath(".//input[@name='name']")).sendKeys(userEmail);         // Вводим Email
-        driver.findElement(xpath(".//input[@name='Пароль']")).sendKeys(userPassword);   // Вводим пароль
-        driver.findElement(xpath(".//button[text() = 'Войти']")).click();                 // Нажать на кнопку Зарегистрироваться
+        UserAuthorization userAuthorization = new UserAuthorization(driver);
+        userAuthorization.setUserDataAuthorization(userEmail, userPassword);
         wait.until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
     }
 
@@ -63,9 +58,8 @@ public class UiTest {
         driver.get("https://stellarburgers.nomoreparties.site/");
         driver.findElement(xpath(".//p[text() = 'Личный Кабинет']")).click();
         wait.until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/login"));
-        driver.findElement(xpath(".//input[@name='name']")).sendKeys(userEmail);         // Вводим Email
-        driver.findElement(xpath(".//input[@name='Пароль']")).sendKeys(userPassword);   // Вводим пароль
-        driver.findElement(xpath(".//button[text() = 'Войти']")).click();                 // Нажать на кнопку Зарегистрироваться
+        UserAuthorization userAuthorization = new UserAuthorization(driver);
+        userAuthorization.setUserDataAuthorization(userEmail, userPassword);
         wait.until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
     }
 
@@ -77,9 +71,8 @@ public class UiTest {
         driver.get("https://stellarburgers.nomoreparties.site/register");
         driver.findElement(xpath(".//a[text() = 'Войти']")).click();
         wait.until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/login"));
-        driver.findElement(xpath(".//input[@name='name']")).sendKeys(userEmail);         // Вводим Email
-        driver.findElement(xpath(".//input[@name='Пароль']")).sendKeys(userPassword);   // Вводим пароль
-        driver.findElement(xpath(".//button[text() = 'Войти']")).click();                 // Нажать на кнопку Зарегистрироваться
+        UserAuthorization userAuthorization = new UserAuthorization(driver);
+        userAuthorization.setUserDataAuthorization(userEmail, userPassword);
         wait.until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
     }
 
@@ -91,9 +84,8 @@ public class UiTest {
         driver.get("https://stellarburgers.nomoreparties.site/forgot-password");
         driver.findElement(xpath(".//a[text() = 'Войти']")).click();
         wait.until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/login"));
-        driver.findElement(xpath(".//input[@name='name']")).sendKeys(userEmail);         // Вводим Email
-        driver.findElement(xpath(".//input[@name='Пароль']")).sendKeys(userPassword);   // Вводим пароль
-        driver.findElement(xpath(".//button[text() = 'Войти']")).click();                 // Нажать на кнопку Зарегистрироваться
+        UserAuthorization userAuthorization = new UserAuthorization(driver);
+        userAuthorization.setUserDataAuthorization(userEmail, userPassword);
         wait.until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
     }
 
@@ -105,9 +97,8 @@ public class UiTest {
         driver.get("https://stellarburgers.nomoreparties.site/");
         driver.findElement(xpath(".//button[text() = 'Войти в аккаунт']")).click();
         wait.until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/login"));
-        driver.findElement(xpath(".//input[@name='name']")).sendKeys(userEmail);         // Вводим Email
-        driver.findElement(xpath(".//input[@name='Пароль']")).sendKeys(userPassword);   // Вводим пароль
-        driver.findElement(xpath(".//button[text() = 'Войти']")).click();                 // Нажать на кнопку Зарегистрироваться
+        UserAuthorization userAuthorization = new UserAuthorization(driver);
+        userAuthorization.setUserDataAuthorization(userEmail, userPassword);
         wait.until(ExpectedConditions.urlToBe("https://stellarburgers.nomoreparties.site/"));
 
         System.out.println("Шаг1: Переход по клику на «Личный кабинет».");
@@ -143,14 +134,15 @@ public class UiTest {
     public void designer() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         driver.get("https://stellarburgers.nomoreparties.site/");
-        System.out.println("Шаг1: Переход в Начинки");
-        driver.findElement(xpath(".//span[text() = 'Начинки']")).click();
+        DesignerAssembleBurger designerAssembleBurger = new DesignerAssembleBurger(driver);
+
+        designerAssembleBurger.setDesigner("Начинки");
         wait.until(ExpectedConditions.attributeToBe(By.xpath(".//section[1]/div[1]/div[3]"), "class", "tab_tab__1SPyG tab_tab_type_current__2BEPc pt-4 pr-10 pb-4 pl-10 noselect"));
-        System.out.println("Шаг2: Переход в Соусы");
-        driver.findElement(xpath(".//span[text() = 'Соусы']")).click();
+
+        designerAssembleBurger.setDesigner("Соусы");
         wait.until(ExpectedConditions.attributeToBe(By.xpath(".//section[1]/div[1]/div[2]"), "class", "tab_tab__1SPyG tab_tab_type_current__2BEPc pt-4 pr-10 pb-4 pl-10 noselect"));
-        System.out.println("Шаг3: Переход в Булки");
-        driver.findElement(xpath(".//span[text() = 'Булки']")).click();
+
+        designerAssembleBurger.setDesigner("Булки");
         wait.until(ExpectedConditions.attributeToBe(By.xpath(".//section[1]/div[1]/div[1]"), "class", "tab_tab__1SPyG tab_tab_type_current__2BEPc pt-4 pr-10 pb-4 pl-10 noselect"));
     }
 

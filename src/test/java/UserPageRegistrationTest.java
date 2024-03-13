@@ -1,19 +1,17 @@
 import Api.DeleteUserApi;
-import io.github.bonigarcia.wdm.WebDriverManager;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.junit.After;
 import java.time.Duration;
 import java.util.Random;
 
-public class UserPageRegistrationTest {
+public class UserPageRegistrationTest extends DriverProperties {
     int randomNumber = new Random().nextInt(1000000);
     String userName ="garri-" + randomNumber;
     String userEmail ="garri-" + randomNumber + "@yandex.ru";
@@ -22,11 +20,8 @@ public class UserPageRegistrationTest {
 
     WebDriver driver;
     @Before
-    public void setUp() { //Используем менеджер для простой и удобной подготовки драйверов
-        WebDriverManager.chromedriver().setup(); //Драйвер для chrome
-        driver = new ChromeDriver();
-//        WebDriverManager.yandexdriver().setup(); //Драйвер для Яндекс.Браузера
-//        driver = new InternetExplorerDriver();
+    public void setUp() {
+        driver = initDriver("yandex");
         driver.get("https://stellarburgers.nomoreparties.site/register");
     }
 
